@@ -22,11 +22,11 @@ quit_threshold={'turn_min':5, 'turn_max':10, 'quit_intent':3}
 #여기 다시
 def high_music_selection(user_input, data, llm):
     flag=0
-
+    option=None
     if data['turn']==0:
-        data['option']='option5'
+        option='option5'
         response=''
-        return response, data, flag
+        return response, data, flag, option
 
     #intent detection
     intent_dectect_chain = intent_dectect_prompt | llm | StrOutputParser()
@@ -99,14 +99,14 @@ def high_music_selection(user_input, data, llm):
     #quit 
     if data['turn'] > quit_threshold['turn_min']:
         if data['quit_response']>=quit_threshold['quit_intent']:
-            response, data, flag = music_creation("", data, llm, slot)
+            response, data, flag, option = music_creation("", data, llm, slot)
         
         checked_slot=slot.model_dump()
         if None not in checked_slot.values():
-            response, data, flag = music_creation("", data, llm, slot)
+            response, data, flag, option = music_creation("", data, llm, slot)
         
     if data['turn'] >= quit_threshold['turn_max']:
-        response, data, flag = music_creation("", data, llm, slot)
+        response, data, flag, option = music_creation("", data, llm, slot)
 
 
-    return response, data, flag
+    return response, data, flag, option

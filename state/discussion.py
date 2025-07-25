@@ -21,10 +21,11 @@ quit_threshold={'turn_min':1, 'turn_max':5, 'quit_intent':3}
 
 def discussion(user_input, data, llm) -> str:
     flag=0
+    option=None
     if data['turn']==0:
-        data['option']='option2'
+        option='option2'
         response=''
-        return response, data, flag
+        return response, data, flag, option
 
     #intent detection
     intent_dectect_chain = intent_dectect_prompt | llm | StrOutputParser()
@@ -97,7 +98,7 @@ def discussion(user_input, data, llm) -> str:
     if data['turn'] >= quit_threshold['turn_max']:
         flag=1
 
-    return response, data, flag
+    return response, data, flag, option
 
 
 

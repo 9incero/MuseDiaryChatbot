@@ -22,6 +22,7 @@ quit_threshold={'turn_min':5, 'turn_max':15, 'quit_intent':3}
 
 def high_lyrics_concept(user_input, data, llm):
     flag=0
+    option=None
     #intent detection
     intent_dectect_chain = intent_dectect_prompt | llm | StrOutputParser()
     intent_output = intent_dectect_chain.invoke({"user_response":user_input})
@@ -32,7 +33,6 @@ def high_lyrics_concept(user_input, data, llm):
     
     memory_vars = data['memory'].load_memory_variables({})
     history = memory_vars.get("history", "")
-    print('history\n',history)
 
     #slot 채우기
     structured_llm = llm.with_structured_output(schema=SlotFormat)
@@ -112,23 +112,23 @@ def high_lyrics_concept(user_input, data, llm):
     #quit 
     if data['turn'] > quit_threshold['turn_min']:
         if data['quit_response']>=quit_threshold['quit_intent']:
-            response, data, flag = making_lyrics("", data, llm, slot)
+            response, data, flag, option = making_lyrics("", data, llm, slot)
         
         checked_slot=slot.model_dump()
         if None not in checked_slot.values():
-            response, data, flag = making_lyrics("", data, llm, slot)
+            response, data, flag, option = making_lyrics("", data, llm, slot)
         
     if data['turn'] >= quit_threshold['turn_max']:
-        response, data, flag = making_lyrics("", data, llm, slot)
+        response, data, flag, option = making_lyrics("", data, llm, slot)
 
-    return response, data, flag
+    return response, data, flag, option
 
     
 
 
 def making_lyrics(user_input, data, llm, slot):
     flag=1
-
+    option=None
     memory=data['memory']
     memory_vars = memory.load_memory_variables({})
     history = memory_vars.get("history", "")
@@ -183,12 +183,13 @@ def making_lyrics(user_input, data, llm, slot):
     memory.save_context({"input": user_input}, {"output": response})
 
     data['gen_lyrics']=response
-    data['option']='option4'
-    return response, data, flag
+    option='option4'
+    return response, data, flag, option
 
     
 def high_lyrics_change(user_input, data, llm) -> str:
     flag=0
+    option=None
     change_lyrics_prompt="""
     [Lyrics Change Task]
     사용자가 요구하는 지시에 따라 가사를 변경하세요.
@@ -213,4 +214,4 @@ def high_lyrics_change(user_input, data, llm) -> str:
 
     response = change_lyrics_chain.invoke({"user_input": user_input, "total_lyrics":data['gen_lyrics']})
 
-    return response, data, flag
+    return response, data, flag, option

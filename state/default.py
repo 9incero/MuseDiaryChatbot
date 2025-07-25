@@ -25,6 +25,7 @@ quit_threshold={'turn_min':7, 'turn_max':20, 'quit_intent':3}
 
 def default(user_input, data, llm) -> str:
     flag=0
+    option=None
 
     #intent detection
     intent_dectect_chain = intent_dectect_prompt | llm | StrOutputParser()
@@ -47,8 +48,8 @@ def default(user_input, data, llm) -> str:
 
     if data['turn']!=0 and data['impressive_lyrics'] is None and slot.music_reason is not None and slot.music_today_relationship is not None:
         response="노래에서 인상 깊었던 구절은 무엇인가요?"
-        data['option']='option6'
-        return response, data, flag
+        option='option6'
+        return response, data, flag,option
     
 
     today_question_response="""
@@ -134,16 +135,16 @@ def default(user_input, data, llm) -> str:
     if data['turn'] > quit_threshold['turn_min']:
         if data['quit_response']>=quit_threshold['quit_intent']:
             flag=1
-            data['option']='option2'
+            option='option2'
         
         checked_slot=slot.model_dump()
         if None not in checked_slot.values():
             flag=1
-            data['option']='option2'
+            option='option2'
 
         
     if data['turn'] >= quit_threshold['turn_max']:
         flag=1
-        data['option']='option2'
+        option='option2'
 
-    return response, data, flag
+    return response, data, flag, option

@@ -82,6 +82,7 @@ def generate_mureka_song_and_wait(title: str, lyrics: str, music_component: str)
 
 
 def music_creation(user_input, data, llm, slot):
+    option=None
     flag=0
     """
     CombinedSlot(dict) 타입의 user_input에서 가사와 음악 스타일 정보를 추출하여
@@ -98,7 +99,7 @@ def music_creation(user_input, data, llm, slot):
         response = "가사가 입력되지 않았습니다."
         #여기 가사 없으면 instrumental만 나오는 걸로 바꿔야함
         flag=1
-        return response, data, flag
+        return response, data, flag, option
 
     # 2. 음악 스타일 프롬프트 생성
     music_prompt = PromptTemplate(
@@ -130,4 +131,4 @@ def music_creation(user_input, data, llm, slot):
     else:
         response = f"노래 생성에 실패했습니다: {audio_url}"
 
-    return response, data, flag
+    return response, data, flag, option

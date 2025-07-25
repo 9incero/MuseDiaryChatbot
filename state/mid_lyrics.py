@@ -4,10 +4,12 @@ from langchain_core.output_parsers import StrOutputParser
 
 #user_input을 바꿀가사부분 -> 어떻게 바꿀지에 대한 지시에 대한 내용으로
 def mid_lyrics_change(user_input, data, llm) -> str:
-    flag=1
+    #이거 바꾸기 0으로
+    flag=0
+    option=None
     if data['turn']==0:
         response=''
-        data['option']='option4'
+        option='option4'
         return response, data, flag
     
     change_lyrics_prompt="""
@@ -35,4 +37,4 @@ def mid_lyrics_change(user_input, data, llm) -> str:
 
     response = change_lyrics_chain.invoke({"user_input": user_input, "total_lyrics":data['lyrics']})
 
-    return response, data, flag
+    return response, data, flag, option

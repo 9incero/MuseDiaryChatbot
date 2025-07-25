@@ -47,7 +47,7 @@ def execute_state(
     state_func=STATE_FUNCTION[state]
     path_list=PATH[data['energy']][data['want_lyrics']]
 
-    response, data, flag = state_func(user_input, data, llm)
+    response, data, flag, option = state_func(user_input, data, llm)
 
     data['turn']+=1
 
@@ -63,5 +63,5 @@ def execute_state(
         data['turn']=0
 
 
-    return response, data
+    return response, data, option
 
